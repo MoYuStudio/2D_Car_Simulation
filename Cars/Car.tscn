@@ -2,13 +2,15 @@
 
 [ext_resource type="Texture2D" uid="uid://ir5kjqwpsw5t" path="res://art/arrow_gold.png" id="1"]
 [ext_resource type="Texture2D" uid="uid://drx0ko845861d" path="res://art/arrow_green.png" id="2"]
-[ext_resource type="Texture2D" uid="uid://dyshh7d0iv4tr" path="res://art/car_red_5.png" id="3"]
 [ext_resource type="Script" path="res://Cars/Car.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://b0c0ovom57o00" path="res://Cars/Trail.tscn" id="5"]
 
 [sub_resource type="CapsuleShape2D" id="1"]
 radius = 14.076
 height = 28.152
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_5tu8b"]
+load_path = "res://.godot/imported/car_red_5.png-a6653a515d41f3582521013a96c2adf9.ctex"
 
 [node name="Car" type="CharacterBody2D"]
 script = ExtResource("4")
@@ -20,7 +22,7 @@ shape = SubResource("1")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("3")
+texture = SubResource("CompressedTexture2D_5tu8b")
 
 [node name="arrow_gold" type="Sprite2D" parent="."]
 visible = false
