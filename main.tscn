@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bo7dejv42s4wo"]
+
+[ext_resource type="PackedScene" uid="uid://fdby4jk8hh5w" path="res://Cars/Player.tscn" id="1_ip1cc"]
+[ext_resource type="Texture2D" uid="uid://ckpysj1p40ab2" path="res://icon.png" id="2_pi0lw"]
+
+[node name="World" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_ip1cc")]
+position = Vector2(139.398, -14.4249)
+
+[node name="Icon" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(493, 318)
+scale = Vector2(47.9625, 41.0281)
+texture = ExtResource("2_pi0lw")
