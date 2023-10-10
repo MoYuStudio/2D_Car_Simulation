@@ -1,10 +1,8 @@
-res://default_env.tres
-res://Cars/Player.tscn
-res://Tracks/Track00.tscn
-res://Tracks/Track01.tscn
+res://main.tscn
 res://Cars/Car.tscn
 res://Cars/Enemy.tscn
-res://Cars/Trail.tscn
+res://Cars/Player.tscn
 res://Utils/DrawVectors.tscn
-res://Cars/Enemy.gd
-res://main.tscn
+res://Cars/Trail.tscn
+res://Cars/Car.gd
+res://Cars/Player.gd

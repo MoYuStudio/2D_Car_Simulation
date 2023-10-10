@@ -10,7 +10,6 @@ radius = 14.076
 height = 28.152
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_5tu8b"]
-load_path = "res://.godot/imported/car_red_5.png-a6653a515d41f3582521013a96c2adf9.ctex"
 
 [node name="Car" type="CharacterBody2D"]
 script = ExtResource("4")

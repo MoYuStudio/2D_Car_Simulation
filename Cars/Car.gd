@@ -2,28 +2,28 @@ extends CharacterBody2D
 
 class_name Car
 
-var wheel_base = 60 # distance between front and back wheel
+var wheel_base = 60 # 前轮和后轮之间的距离
 
-@export var max_steering_angle = 10 # how far the front wheel turns
+@export var max_steering_angle = 10 # 前轮最大转角
 @export var steering_speed = 0.1
-var current_steering_angle = 0.0 # gradually lerps into max steering angle at steering speed
+var current_steering_angle = 0.0 # 逐渐以转向速度lerp到最大转角
 
 @export var max_acc = 1200
 var current_acc = 0.0
 @export var reverse_acc = -450
 @export var max_speed_reverse = 250
-# friction is against the ground(sand/ice)
+# 摩擦力针对地面（沙土/冰雪）
 @export var friction = -0.2
-# drag is wind resistance, based on crossection of the car
-# friction is based on your velocity, drag is based on square of your velocity
-# at a slow speed friction is more significant, at a high speed drag is more significant
+# 阻力是风阻，基于车辆的截面积
+# 摩擦力基于速度，阻力基于速度的平方
+# 在低速时，摩擦力更显著，在高速时，阻力更显著
 @export var drag = -0.001
 
-@export var drift_speed = 800 # above this speed you start sliding
-@export var drift_angle = 9 # turn angle between frames
+@export var drift_speed = 800 # 超过此速度开始打滑
+@export var drift_angle = 9 # 帧之间的转向角度
 var drift_timer = 0.5
-@export var traction_fast = 0.001 # how slippery it is when you're above that speed
-@export var traction_slow = 0.995 # below slip speed. at 1.0 it would change velocity instantly
+@export var traction_fast = 0.001 # 当速度高于此值时，会更容易打滑
+@export var traction_slow = 0.995 # 低于打滑速度。如果为1.0，会立即改变速度
 @onready var current_traction = traction_slow
 var drifting = false
 var prev_heading = Vector2()
@@ -36,7 +36,7 @@ var vel = Vector2()
 @onready var trail2 = $TrailPos2/Trail
 @onready var trail3 = $TrailPos3/Trail
 @onready var trail4 = $TrailPos4/Trail
-@onready var trails = [trail1,trail2,trail3,trail4]
+@onready var trails = [trail1, trail2, trail3, trail4]
 
 
 func _physics_process(delta):
@@ -52,32 +52,30 @@ func _physics_process(delta):
 	physics_process(delta)
 
 func collide(delta):
-	var collision = move_and_collide(vel*delta)
+	var collision = move_and_collide(vel * delta)
 	if collision:
-		# vel = vel.slide(collision.normal) # super.lerp(vel.bounce(collision.normal), 0.1)
+		# vel = vel.slide(collision.normal) # 使用super.lerp(vel.bounce(collision.normal), 0.1)来滑行
 		rotation = lerp_angle(rotation, vel.angle(), 0.1)
 	
 	
 func apply_friction():
-	# stop if i'm really slow
+	# 如果速度非常慢，停止
 	if vel.length() < 5: vel = Vector2()
-	# Force in the opposite direction of velocity
+	# 反向速度的力
 	var friction_force = vel * friction
-	# Velocity squared multiplied by drag
-	var drag_force = vel * vel.length()  * drag
-	# Add the friction/drag vectors to slow down
+	# 速度的平方乘以阻力
+	var drag_force = vel * vel.length() * drag
+	# 添加摩擦力和阻力向量以减速
 	acc += friction_force + drag_force
 	
 func drift(delta):
-	#var steering_angle = abs(rad2deg(prev_heading.angle_to(new_heading)))
-	#print(steering_angle)
-	# When the car goes above a certain speed it'll have less traction and drift more
+	# 如果速度大于打滑速度，并且当前转向角度的绝对值大于打滑角度：
 	if vel.length() > drift_speed and abs(rad_to_deg(current_steering_angle)) > drift_angle: 
 		drifting = true
 		drift_timer = 0.5
-	# When speed/angle are just on the threshold, drifting annoyingly oscillates on and off
-	# Instead of toggling it based on speed, I turn it on when the speed has crossed a threshold,
-	# And then turn it off after awhile
+	# 当速度/角度刚好在阈值上时，打滑会烦人地反复打开和关闭
+	# 我们不是基于速度切换它，而是在速度越过一个阈值后打开它，
+	# 一段时间后再关闭
 	drift_timer -= delta
 	if drift_timer <= 0:
 		drifting = false
@@ -93,23 +91,22 @@ func drift(delta):
 
 
 func calculate_steering(delta):
-	# locations of wheels
+	# 轮子的位置
 	var rear_wheel = position - transform.x * wheel_base/2
 	var front_wheel = position + transform.x * wheel_base/2
-	rear_wheel += vel * delta 	# back wheel goes forward by velocity
-	front_wheel += vel.rotated(current_steering_angle) * delta # front wheel goes forward in the direction where steering is turning
-	new_heading = (front_wheel - rear_wheel).normalized() # vector pointing in new direction
+	rear_wheel += vel * delta 	# 后轮按速度前进
+	front_wheel += vel.rotated(current_steering_angle) * delta # 前轮按方向前进，方向是转向的方向
+	new_heading = (front_wheel - rear_wheel).normalized() # 指向新方向的向量
 	rotation = new_heading.angle()
 
 	var is_moving_forward = new_heading.dot(vel.normalized()) > -0.5
 	if is_moving_forward: 
-		var target_vel = new_heading * vel.length()  # rotate velocity in the new direction, maintain it's speed
+		var target_vel = new_heading * vel.length()  # 将速度旋转到新方向，保持速度不变
 		vel = vel.lerp(target_vel, current_traction)
 	else:
-		vel = -new_heading * min(vel.length(), max_speed_reverse)  # can't go faster than reverse speed
+		vel = -new_heading * min(vel.length(), max_speed_reverse)  # 不能超过倒车速度
 	
 func physics_process(delta):
 	pass
 func control():
-	pass # defined in inherited scenes. Enemy.gd or Player.gd
-	
+	pass # 在继承的场景中定义，如Enemy.gd或Player.gd
